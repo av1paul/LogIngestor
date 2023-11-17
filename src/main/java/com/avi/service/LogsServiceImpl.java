@@ -1,6 +1,9 @@
 package com.avi.service;
 
 import com.avi.dto.LogDto;
+import com.avi.dto.MetaDataDto;
+import com.avi.exception.ApiException;
+import com.avi.exception.ErrorCode;
 import com.avi.pojo.Log;
 import com.avi.mapper.LogMapper;
 import com.avi.repository.LogRepository;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,46 +48,29 @@ public class LogsServiceImpl implements LogsService {
     @Override
     public List<LogDto> saveLogs(List<LogDto> request) {
         List<Log> logs = logMapper.getLogs(request);
-
-        mongoTemplate.setWriteConcern(WriteConcern.W1.withJournal(true));
-        BulkOperations bulkInsertion = mongoTemplate.bulkOps(BulkOperations.BulkMode.ORDERED, Log.class);
-        logs.forEach(bulkInsertion::insert);
-        BulkWriteResult bulkWriteResult = bulkInsertion.execute();
-
+        logRepository.saveAll(logs);
         return logMapper.getLogDtos(logs);
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<LogDto> seacrhLogs(String searchString, LogDto filter) {
+    public List<LogDto> seacrhLogs(String searchString, LogDto filter) throws ApiException {
         Map<String, Object> filterMap = getFilterMap(filter);
-
         Criteria criteria = new Criteria();
-
-        criteria.orOperator(
-                Criteria.where("level").regex(searchString, "i"),
-                Criteria.where("message").regex(searchString, "i"),
-                Criteria.where("resourceId").regex(searchString, "i"),
-                Criteria.where("traceId").regex(searchString, "i"),
-                Criteria.where("spanId").regex(searchString, "i"),
-                Criteria.where("commit").regex(searchString, "i"),
-                Criteria.where("metadata.parentResourceId").regex(searchString, "i")
-        );
-
-        for(Map.Entry<String, Object> entry : filterMap.entrySet())  {
-            String fieldName = entry.getKey();
-            Object value = entry.getValue();
-            criteria.and(fieldName).is(value);
-        }
-
+        applyRegex(searchString, criteria);
+        applyFilter(filterMap, criteria);
         List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);
         System.out.println(logs);
         return logMapper.getLogDtos(logs);
     }
 
     @Override
-    public List<LogDto> getLogsInRange(ZonedDateTime startTime, ZonedDateTime endTime) {
+    @Transactional(readOnly = true)
+    public List<LogDto> getLogsInRange(ZonedDateTime startTime, ZonedDateTime endTime) throws ApiException {
+        if(startTime.isAfter(endTime)) {
+            throw new ApiException("Start Time can't be after End Time", ErrorCode.BAD_REQUEST);
+        }
         Criteria criteria = new Criteria();
         criteria.and("timestamp").gte(timeStampConverter.convert(startTime)).lte(timeStampConverter.convert(endTime));
         List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);
@@ -91,7 +78,7 @@ public class LogsServiceImpl implements LogsService {
         return logMapper.getLogDtos(logs);
     }
 
-    private Map<String, Object> getFilterMap(LogDto filter) {
+    private Map<String, Object> getFilterMap(LogDto filter) throws ApiException {
         Map<String, Object> filterMap = new HashMap<>();
         for (Field field : LogDto.class.getDeclaredFields()) {
             field.setAccessible(true);
@@ -100,7 +87,7 @@ public class LogsServiceImpl implements LogsService {
             try {
                 fieldValue = field.get(filter);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new ApiException("Illegal Access", ErrorCode.INTERNAL_SERVER_ERROR);
             }
             if(fieldValue == null) {
                 continue;
@@ -109,6 +96,37 @@ public class LogsServiceImpl implements LogsService {
             System.out.println(fieldName);
         }
         return filterMap;
+    }
+
+    private void applyRegex(String searchString, Criteria criteria) {
+        List<Criteria> fieldCriteria = new ArrayList<>();
+        for(Field field : Log.class.getDeclaredFields()) {
+            String fieldName = field.getName();
+            if(fieldName.equals("metadata")) {
+                fieldCriteria.add(Criteria.where("metadata.parentResourceId").regex(searchString, "i"));
+                continue;
+            }
+            if(fieldName.equals("timestamp")) {
+                continue;
+            }
+            fieldCriteria.add(Criteria.where(fieldName).regex(searchString, "i"));
+        }
+        criteria.orOperator(fieldCriteria);
+    }
+
+    private void applyFilter(Map<String, Object> filterMap, Criteria criteria) {
+        for(Map.Entry<String, Object> entry : filterMap.entrySet())  {
+            String fieldName = entry.getKey();
+            Object value = entry.getValue();
+            if(fieldName.equals("metadata")) {
+                MetaDataDto metaData = (MetaDataDto) value;
+                if (metaData.getParentResourceId() != null) {
+                    criteria.and("metadata.parentResourceId").is(metaData.getParentResourceId());
+                }
+                continue;
+            }
+            criteria.and(fieldName).is(value);
+        }
     }
 
 

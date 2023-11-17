@@ -1,6 +1,7 @@
 package com.avi.controller;
 
 import com.avi.dto.LogDto;
+import com.avi.exception.ApiException;
 import com.avi.service.LogsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -31,13 +31,16 @@ public class LogController {
     }
 
     @PostMapping("logs-search")
-    public List<LogDto> getLogs(@RequestParam(value = "search-string") String searchString, @RequestBody LogDto filter) {
+    public List<LogDto> getLogsFilter(@RequestParam(value = "searchString") String searchString, @RequestBody LogDto filter)
+            throws ApiException {
         return logsService.seacrhLogs(searchString, filter);
     }
 
     @GetMapping("logs")
-    public List<LogDto> getLogsInRange(@RequestParam("startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime startTime,
-                                       @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime endTime) {
+    public List<LogDto> getLogsInRange(@RequestParam("startTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                           ZonedDateTime startTime,
+                                       @RequestParam("endTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                       ZonedDateTime endTime) throws ApiException {
         return logsService.getLogsInRange(startTime, endTime);
     }
 }
