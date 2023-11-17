@@ -2,8 +2,6 @@ package com.avi.exception;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.http.HttpStatus;
 
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
