@@ -71,7 +71,6 @@ public class LogsServiceImpl implements LogsService {
         Criteria criteria = new Criteria();
         criteria.and("timestamp").gte(timeStampConverter.convert(startTime)).lte(timeStampConverter.convert(endTime));
         List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);
-        System.out.println(logs);
         return logMapper.getLogDtos(logs);
     }
 
@@ -90,7 +89,6 @@ public class LogsServiceImpl implements LogsService {
                 continue;
             }
             filterMap.put(fieldName, fieldValue);
-            System.out.println(fieldName);
         }
         return filterMap;
     }
