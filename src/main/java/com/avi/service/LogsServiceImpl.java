@@ -1,5 +1,6 @@
 package com.avi.service;
 
+import com.avi.dto.FilterDto;
 import com.avi.dto.LogDto;
 import com.avi.dto.MetaDataDto;
 import com.avi.exception.ApiException;
@@ -14,15 +15,17 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.avi.constants.Constants.GROUP_ID;
+import static com.avi.constants.Constants.TOPIC_NAME;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -34,12 +37,18 @@ public class LogsServiceImpl implements LogsService {
     LogMapper logMapper;
     MongoTemplate mongoTemplate;
     TimeStampConverter timeStampConverter;
+    KafkaTemplate<String, Log> kafkaTemplate;
+    @Override
+    public void produceLog(LogDto logDto) {
+        Log log = logMapper.getLog(logDto);
+        kafkaTemplate.send(TOPIC_NAME, log);
+    }
 
     @Override
-    public LogDto saveLog(LogDto dto) {
-        Log log = logMapper.getLog(dto);
-        logRepository.save(log);
-        return logMapper.getLogDto(log);
+    @KafkaListener(topics = {TOPIC_NAME}, groupId = GROUP_ID)
+    public void consumeAndSaveLogs(List<Log> logs) {
+        System.out.println(logs);
+        logRepository.saveAll(logs);
     }
 
     @Override
@@ -47,18 +56,17 @@ public class LogsServiceImpl implements LogsService {
         List<Log> logs = logMapper.getLogs(request);
         logRepository.saveAll(logs);
         return logMapper.getLogDtos(logs);
-
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<LogDto> seacrhLogs(String searchString, LogDto filter) throws ApiException {
+    public List<LogDto> seacrhLogs(String searchString, FilterDto filter) throws ApiException {
         Map<String, Object> filterMap = getFilterMap(filter);
         Criteria criteria = new Criteria();
-        applyRegex(searchString, criteria);
-        applyFilter(filterMap, criteria);
+        this.applyRegex(searchString, criteria);
+        this.applyTimeRange(filter, criteria);
+        this.applyFilter(filterMap, criteria);
         List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);
-        System.out.println(logs);
         return logMapper.getLogDtos(logs);
     }
 
@@ -74,9 +82,9 @@ public class LogsServiceImpl implements LogsService {
         return logMapper.getLogDtos(logs);
     }
 
-    private Map<String, Object> getFilterMap(LogDto filter) throws ApiException {
+    private Map<String, Object> getFilterMap(FilterDto filter) throws ApiException {
         Map<String, Object> filterMap = new HashMap<>();
-        for (Field field : LogDto.class.getDeclaredFields()) {
+        for (Field field : FilterDto.class.getDeclaredFields()) {
             field.setAccessible(true);
             String fieldName = field.getName();
             Object fieldValue = null;
@@ -120,8 +128,20 @@ public class LogsServiceImpl implements LogsService {
                 }
                 continue;
             }
+            if(fieldName.equals("startTime") || fieldName.equals("endTime")) {
+                continue;
+            }
             criteria.and(fieldName).is(value);
         }
+    }
+
+    private void applyTimeRange(FilterDto filterDto, Criteria criteria) {
+        if(filterDto.getStartTime() == null || filterDto.getEndTime() == null) {
+            return;
+        }
+        criteria.and("timestamp").gte(timeStampConverter.convert(filterDto.getStartTime()))
+                .lte(timeStampConverter.convert(filterDto.getEndTime()));
+
     }
 
 
