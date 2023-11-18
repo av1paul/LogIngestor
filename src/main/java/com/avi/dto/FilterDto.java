@@ -1,8 +1,8 @@
 package com.avi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
-
 
 import java.time.ZonedDateTime;
 
@@ -23,6 +23,7 @@ public class FilterDto {
     String commit;
     MetaDataDto metadata;
 
+    @JsonIgnore
     @AssertTrue(message = "Either both or neither start and end time must be present and start must be before end")
     public boolean isBothStartAndEndPresent() {
         if(startTime == null && endTime == null) {

@@ -17,11 +17,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 import static com.avi.constants.Constants.GROUP_ID;
@@ -43,19 +43,11 @@ public class LogsServiceImpl implements LogsService {
         Log log = logMapper.getLog(logDto);
         kafkaTemplate.send(TOPIC_NAME, log);
     }
-
     @Override
+    @Async
     @KafkaListener(topics = {TOPIC_NAME}, groupId = GROUP_ID)
     public void consumeAndSaveLogs(List<Log> logs) {
-        System.out.println(logs);
         logRepository.saveAll(logs);
-    }
-
-    @Override
-    public List<LogDto> saveLogs(List<LogDto> request) {
-        List<Log> logs = logMapper.getLogs(request);
-        logRepository.saveAll(logs);
-        return logMapper.getLogDtos(logs);
     }
 
     @Override
@@ -70,17 +62,6 @@ public class LogsServiceImpl implements LogsService {
         return logMapper.getLogDtos(logs);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<LogDto> getLogsInRange(ZonedDateTime startTime, ZonedDateTime endTime) throws ApiException {
-        if(startTime.isAfter(endTime)) {
-            throw new ApiException("Start Time can't be after End Time", ErrorCode.BAD_REQUEST);
-        }
-        Criteria criteria = new Criteria();
-        criteria.and("timestamp").gte(timeStampConverter.convert(startTime)).lte(timeStampConverter.convert(endTime));
-        List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);
-        return logMapper.getLogDtos(logs);
-    }
 
     private Map<String, Object> getFilterMap(FilterDto filter) throws ApiException {
         Map<String, Object> filterMap = new HashMap<>();

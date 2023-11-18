@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-
 @ControllerAdvice
 public class RestControllerAdvice {
 
@@ -27,7 +26,6 @@ public class RestControllerAdvice {
                 .message("Internal Error")
                 .build();
     }
-
 
     @ExceptionHandler(ApiException.class)
     @ResponseBody
@@ -51,7 +49,6 @@ public class RestControllerAdvice {
                 .build();
 
     }
-
 
     private void setResponseStatus(HttpServletResponse response, ErrorCode errorCode) {
         switch (errorCode) {
