@@ -4,6 +4,10 @@ A Log Ingestor System that can efficiently handle vast volumes of log data, and 
 
 Video: https://drive.google.com/file/d/1SaGDCcsQgFpidHuv34T0AHOilBJ6WQNB/view?usp=drive_link
 
+### Architecture 
+![](/images/Archiecture.png)
+
+
 ## Features
 ### Log Ingestor System
   - Large volume of logs can be ingested via an HTTP server, by sending `POST` HTTP request to the endpoint `http://localhost:3000`.
