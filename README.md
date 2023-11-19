@@ -2,6 +2,8 @@
 
 A Log Ingestor System that can efficiently handle vast volumes of log data, and a simple interface for querying this data using full-text search or specific field filters.
 
+Video: https://drive.google.com/file/d/1SaGDCcsQgFpidHuv34T0AHOilBJ6WQNB/view?usp=drive_link
+
 ## Features
 ### Log Ingestor System
   - Large volume of logs can be ingested via an HTTP server, by sending `POST` HTTP request to the endpoint `http://localhost:3000`.
@@ -186,4 +188,6 @@ Following is an example. Only logs whose `message` field is "Failed to connect t
 
 ### Using Swagger UI
 - Alternatively you can use the `Swagger-UI` to query/search the logs. This can be accessed by opening `http://localhost:3000` in your browser.
-- ![](images/swagger.png)
+
+
+![](images/swagger.png)
