@@ -172,9 +172,11 @@ Following is an example. Only logs whose `message` field is "Failed to connect t
        }
    }
    ```
+   ![](images/usingFilterJSON.png)
 - Similarly for searching logs between time ranges you need the set the `startTime` and `endTime` fields.
 - If you wish to use the `filter.json` file, enter "fiter.json" when prompted for the filename/filepath.
 - Alternatively you can also the enter the filters for each field manually. You will be promoted to enter the values of the field filters. For the fields for which you don't want to set filters, leave them blank.
+  ![](images/withoutFilterJSON.png)
 
 ### Using Swagger UI
 - Alternatively you can use the `Swagger-UI` to query/search the logs. This can be accessed by opening `http://localhost:3000` in your browser.
