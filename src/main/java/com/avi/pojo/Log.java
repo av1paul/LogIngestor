@@ -3,6 +3,7 @@ package com.avi.pojo;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class Log {
     String message;
     @TextIndexed
     String resourceId;
-    @TextIndexed
+    @Indexed
     Date timestamp;
     @TextIndexed
     String spanId;
