@@ -112,7 +112,7 @@ This project is a Spring Boot Application. Follow these steps to setup and appli
 - The application will be accessible at `http://localhost:3000`.
 
 ### Start the Command Line Interface
-- Open a terminal instance in the project directory and the change directory to `cli-script` using
+- Open a terminal instance in the project directory and then change directory to `cli-script` using
     ```bash
     cd cli-script
     ```
@@ -120,7 +120,7 @@ This project is a Spring Boot Application. Follow these steps to setup and appli
     ```bash
     python .\search.py
     ```
-- You might need to install the `requests` library if not already installed. This can be running:
+- You might need to install the `requests` library if not already installed. This can be done by running:
     ```bash
     pip install requests
     ```
@@ -128,7 +128,7 @@ This project is a Spring Boot Application. Follow these steps to setup and appli
 
 ## Usage
 ### Add/Upload Logs
-- Logs can be uploaded by send `POST` HTTP request to the endpoint `http://localhost:3000`.
+- Logs can be uploaded by sending `POST` HTTP request sto the endpoint `http://localhost:3000`.
 Request Body (JSON) format:
    ```
    {
@@ -148,35 +148,33 @@ Request Body (JSON) format:
   - Postman
   - Curl
 
-### Add/Upload Logs
-- Logs can be uploaded by send `POST` HTTP request to the endpoint `http://localhost:3000`.
-Request Body (JSON) format:
+### Search Logs
+- Logs can be searched by making use of the Command Line Interface. Start the CLI as previously discussed. Open the terminal in the directory `logIngestor/cli-script` directory. Run the command:
+    ```bash
+    python .\search.py
+    ```
+- You will prompted to enter the `search string`.
+- Next you can add filters by either providing a JSON file name or entering the filter values manually. 
+- The cli-script directory already contains a JSON file named `filter.json`. You can use this JSON file to apply the appropriate filters. For the fields for which you don't want to set filters, keep their values as `null`. 
+Following is an example. Only logs whose `message` field is "Failed to connect to DB" and `spanId` field is "span-456" will be returned. 
    ```
    {
-      "level": "error",
-      "message": "Failed to connect to DB",
-      "resourceId": "server-1234",
-      "timestamp": "2023-09-15T08:00:00Z",
-      "traceId": "abc-xyz-123",
-      "spanId": "span-456",
-      "commit": "5e5342f",
-      "metadata": {
-      "parentResourceId": "server-0987"
-      }
+       "level": null,
+       "message": "Failed to connect to DB",
+       "resourceId": null,
+       "startTime": null,
+       "endTime": null,
+       "traceId": null
+       "spanId": "span-456",
+       "commit": null,
+       "metadata": {
+          "parentResourceId": null
+       }
    }
    ```
-- This can done by using:
-  - Postman
-  - Curl
+- Similarly for searching logs between time ranges you need the set the `startTime` and `endTime` fields.
+- If you wish to use the `filter.json` file, enter "fiter.json" when prompted for the filename/filepath.
+- Alternatively you can also the enter the filters for each field manually. You will be promoted to enter the values of the field filters. For the fields for which you don't want to set filters, leave them blank.
 
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
+### Using Swagger UI
+- Alternatively you can use the `Swagger-UI` to query/search the logs. This can be accessed by opening `http://localhost:3000` in your browser.
