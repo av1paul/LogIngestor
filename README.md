@@ -3,8 +3,8 @@
 A Log Ingestor System that can efficiently handle vast volumes of log data, and a simple interface for querying this data using full-text search or specific field filters.
 
 ## Features
-- **Log Ingestor System**
-  - Large volume of logs can be ingested via an HTTP server, by sending POST HTTP request on path `http://localhost:3000`.
+### Log Ingestor System
+  - Large volume of logs can be ingested via an HTTP server, by sending `POST` HTTP request to the endpoint `http://localhost:3000`.
   - Request Body (JSON) format:
     ```json 
     {
@@ -21,7 +21,7 @@ A Log Ingestor System that can efficiently handle vast volumes of log data, and 
     }
 
     ```
-- **Query Interface**
+### Query Interface
   - Command Line Interface (CLI) for fast and efficient full-text search across logs. Filters based on:
      - level
      - message
@@ -127,19 +127,48 @@ This project is a Spring Boot Application. Follow these steps to setup and appli
 
 
 ## Usage
+### Add/Upload Logs
+- Logs can be uploaded by send `POST` HTTP request to the endpoint `http://localhost:3000`.
+Request Body (JSON) format:
+   ```
+   {
+      "level": "error",
+      "message": "Failed to connect to DB",
+      "resourceId": "server-1234",
+      "timestamp": "2023-09-15T08:00:00Z",
+      "traceId": "abc-xyz-123",
+      "spanId": "span-456",
+      "commit": "5e5342f",
+      "metadata": {
+      "parentResourceId": "server-0987"
+      }
+   }
+   ```
+- This can done by using:
+  - Postman
+  - Curl
 
-```python
-import foobar
+### Add/Upload Logs
+- Logs can be uploaded by send `POST` HTTP request to the endpoint `http://localhost:3000`.
+Request Body (JSON) format:
+   ```
+   {
+      "level": "error",
+      "message": "Failed to connect to DB",
+      "resourceId": "server-1234",
+      "timestamp": "2023-09-15T08:00:00Z",
+      "traceId": "abc-xyz-123",
+      "spanId": "span-456",
+      "commit": "5e5342f",
+      "metadata": {
+      "parentResourceId": "server-0987"
+      }
+   }
+   ```
+- This can done by using:
+  - Postman
+  - Curl
 
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
 
 ## Contributing
 
