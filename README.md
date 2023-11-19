@@ -68,7 +68,7 @@ This project uses Apache Kafka. Follow these steps to start the Kafka Zookeeper 
      ```
 ### Spring Boot Application Repository Setup: 
 This project is a Spring Boot Application. Follow these steps to setup and application repository. 
-   - Open a terminal and in a directory of your choice, run the following to clone the repository:
+   - Open a terminal session in a directory of your choice, run the following to clone the repository:
      ```bash
         git clone https://github.com/dyte-submissions/november-2023-hiring-av1paul.git
      ```
@@ -112,11 +112,11 @@ This project is a Spring Boot Application. Follow these steps to setup and appli
 - The application will be accessible at `http://localhost:3000`.
 
 ### Start the Command Line Interface
-- Open a terminal instance in the project directory and then change directory to `cli-script` using
+- Open a terminal session in the project directory and then change directory to `cli-script` using
     ```bash
     cd cli-script
     ```
-- To start the Interface, run the following command to start the Python Script:
+- To start CLI, run the following command to start the Python Script:
     ```bash
     python .\search.py
     ```
@@ -155,7 +155,7 @@ Request Body (JSON) format:
   
 
 ### Search Logs
-- Logs can be searched by making use of the Command Line Interface. Start the CLI as previously discussed. Open the terminal in the directory `logIngestor/cli-script` directory. Run the command:
+- Logs can be searched by making use of the Command Line Interface. Start the CLI as previously discussed. Open a terminal session in the `logIngestor/cli-script` directory. Run the command:
     ```bash
     python .\search.py
     ```
