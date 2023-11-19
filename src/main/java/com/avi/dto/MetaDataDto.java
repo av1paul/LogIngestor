@@ -1,5 +1,6 @@
 package com.avi.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MetaDataDto {
-    String parentResourceId;
+    @NotNull(message = "Parent Resource Id cannot be null") String parentResourceId;
 }
 
 

@@ -28,7 +28,7 @@ public class LogController {
 
     @Hidden
     @PostMapping
-    public ResponseEntity<Void> saveLog(@RequestBody LogDto logDto) throws ApiException {
+    public ResponseEntity<Void> saveLog(@RequestBody @Valid LogDto logDto) throws ApiException {
         logsService.produceLog(logDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -39,7 +39,7 @@ public class LogController {
                     "To add filter for a field, specify the value in the request body, otherwise keep it null"
     )
     @PostMapping("logs-search")
-    public ResponseEntity<List<LogDto>> getLogsFilter(@RequestParam(value = "searchString") String searchString,
+    public ResponseEntity<List<LogDto>> getLogsFilter(@RequestParam(value = "searchString", required = false) String searchString,
                                                       @RequestBody @Valid FilterDto filter)
             throws ApiException {
         return new ResponseEntity<>(logsService.seacrhLogs(searchString, filter), HttpStatus.OK);

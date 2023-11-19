@@ -1,5 +1,6 @@
 package com.avi.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,11 +15,11 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LogDto {
-    String level;
-    String message;
-    String resourceId;
-    ZonedDateTime timestamp;
-    String spanId;
-    String commit;
-    MetaDataDto metadata;
+    @NotNull(message = "Level cannot be null") String level;
+    @NotNull(message = "Message cannot be null") String message;
+    @NotNull(message = "Resource ID cannot be null") String resourceId;
+    @NotNull(message = "Timestamp cannot be null") ZonedDateTime timestamp;
+    @NotNull(message = "Span ID cannot be null") String spanId;
+    @NotNull(message = "Commit cannot be null") String commit;
+    @NotNull(message = "Metadata cannot be null") MetaDataDto metadata;
 }

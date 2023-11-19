@@ -55,7 +55,9 @@ public class LogsServiceImpl implements LogsService {
     public List<LogDto> seacrhLogs(String searchString, FilterDto filter) throws ApiException {
         Map<String, Object> filterMap = getFilterMap(filter);
         Criteria criteria = new Criteria();
-        this.applyRegex(searchString, criteria);
+        if(searchString != null) {
+            this.applyRegex(searchString, criteria);
+        }
         this.applyTimeRange(filter, criteria);
         this.applyFilter(filterMap, criteria);
         List<Log> logs = mongoTemplate.find(new Query(criteria), Log.class);

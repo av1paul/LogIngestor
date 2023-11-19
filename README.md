@@ -165,10 +165,10 @@ Request Body (JSON) format:
     ```bash
     python .\search.py
     ```
-- You will prompted to enter the `search string`.
-- Next you can add filters by either providing a JSON file name or entering the filter values manually. 
-- The cli-script directory already contains a JSON file named `filter.json`. You can use this JSON file to apply the appropriate filters. For the fields for which you don't want to set filters, keep their values as `null`. 
-Following is an example. Only logs whose `message` field is "Failed to connect to DB" and `spanId` field is "span-456" will be returned. 
+- You will prompted to enter the `search string`. If the `search string` is empty, search will be done only on the basis of filters. For example, if `search string` is empty, and filter specifies that `message` field is "Failed to connect to DB", then all logs whose `message` field is set to "Failed to connect to DB" will be returned.
+- Next you can add filters by either providing a JSON file name or entering the filter values manually.
+- The cli-script directory already contains a JSON file named `filter.json`. You can use this JSON file to apply the appropriate filters. For the fields for which you don't want to set filters, keep their values as `null`.
+  Following is an example. Only logs which contain the `search string` and whose `message` field is "Failed to connect to DB" and `spanId` field is "span-456" will be returned. Following is an example. Only logs whose `message` field is "Failed to connect to DB" and `spanId` field is "span-456" will be returned. 
    ```
    {
        "level": null,
