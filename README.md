@@ -2,7 +2,7 @@
 
 A Log Ingestor System that can efficiently handle vast volumes of log data, and a simple interface for querying this data using full-text search or specific field filters.
 
-Video: https://drive.google.com/file/d/1SaGDCcsQgFpidHuv34T0AHOilBJ6WQNB/view?usp=drive_link
+[Video Link](https://drive.google.com/file/d/1SaGDCcsQgFpidHuv34T0AHOilBJ6WQNB/view?usp=drive_link)
 
 ### Architecture 
 ![](/images/Archiecture.png)
