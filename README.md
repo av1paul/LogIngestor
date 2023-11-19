@@ -146,7 +146,13 @@ Request Body (JSON) format:
    ```
 - This can done by using:
   - Postman
+  
   - Curl
+
+    ![](images/postman.png)
+  
+    ![](images/curl.png)
+  
 
 ### Search Logs
 - Logs can be searched by making use of the Command Line Interface. Start the CLI as previously discussed. Open the terminal in the directory `logIngestor/cli-script` directory. Run the command:
@@ -180,3 +186,4 @@ Following is an example. Only logs whose `message` field is "Failed to connect t
 
 ### Using Swagger UI
 - Alternatively you can use the `Swagger-UI` to query/search the logs. This can be accessed by opening `http://localhost:3000` in your browser.
+- ![](images/swagger.png)
